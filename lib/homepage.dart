@@ -12,7 +12,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<String> _paragraphs = [];
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   Future<void> fetchLoremText(int paragraphs) async {
     final response = await http.get(
@@ -37,6 +37,7 @@ class _HomePageState extends State<HomePage> {
     int paragraphs = int.tryParse(_controller.text) ?? 0;
     if (paragraphs > 0) {
       fetchLoremText(paragraphs);
+      FocusScope.of(context).unfocus();
     } else {
       setState(() {
         _paragraphs = ['Enter a valid number.'];
@@ -47,66 +48,93 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Loren Ipsum Generator'),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Text(
-              'Tired of boring Lorem Ipsum?'.toUpperCase(),
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 25),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
+          child: GestureDetector(
+            // close text field/ remove keyboard
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Column(
               children: [
                 const Text(
-                  'Paragraphs:',
-                  style: TextStyle(fontSize: 18),
+                  'Loren Ipsum Generator',
+                  style: TextStyle(fontSize: 20),
                 ),
-                // paragraph input
-                SizedBox(
-                  height: 35,
-                  width: 70,
-                  child: TextField(
-                    controller: _controller,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.only(left: 10, right: 10),
-                      filled: true,
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          width: 2,
-                          color: Colors.black,
+                const SizedBox(height: 30),
+                Text(
+                  'Tired of boring Lorem Ipsum?'.toUpperCase(),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 20),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const Text(
+                      'Paragraphs:',
+                      style: TextStyle(fontSize: 18, letterSpacing: 0.5),
+                    ),
+                    // paragraph input
+                    SizedBox(
+                      height: 35,
+                      width: 70,
+                      child: TextField(
+                        controller: _controller,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.only(left: 10, right: 10),
+                          filled: true,
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              width: 2,
+                              color: Colors.black,
+                            ),
+                          ),
                         ),
                       ),
                     ),
+                    // generate button
+                    MaterialButton(
+                      color: Colors.green.shade600,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 9),
+                      onPressed: _generateLoremText,
+                      child: const Text(
+                        'Generate',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                const Divider(),
+                const SizedBox(height: 10),
+                Expanded(
+                  child: ListView(
+                    children: _paragraphs.map((paragraph) {
+                      return Container(
+                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.only(bottom: 20),
+                        decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Text(
+                          paragraph.substring(0),
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
-                // generate button
-                MaterialButton(
-                  color: Colors.green.shade600,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  onPressed: _generateLoremText,
-                  child: const Text(
-                    'Generate',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.white,
-                    ),
-                  ),
-                )
               ],
             ),
-          ],
+          ),
         ),
       ),
     );

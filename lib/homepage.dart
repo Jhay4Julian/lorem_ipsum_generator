@@ -32,6 +32,18 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // generate text function
+  void _generateLoremText() {
+    int paragraphs = int.tryParse(_controller.text) ?? 0;
+    if (paragraphs > 0) {
+      fetchLoremText(paragraphs);
+    } else {
+      setState(() {
+        _paragraphs = ['Enter a valid number.'];
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.green.shade600,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  onPressed: () {},
+                  onPressed: _generateLoremText,
                   child: const Text(
                     'Generate',
                     style: TextStyle(

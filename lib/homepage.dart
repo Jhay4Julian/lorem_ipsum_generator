@@ -14,12 +14,19 @@ class _HomePageState extends State<HomePage> {
   List<String> _paragraphs = [];
   final TextEditingController _controller = TextEditingController();
 
+  bool _isLoading = false;
+
   Future<void> fetchLoremText(int paragraphs) async {
+    setState(() {
+      _isLoading = true;
+    });
+
     final response = await http.get(
       Uri.parse(
           'https://api.api-ninjas.com/v1/loremipsum?paragraphs=$paragraphs'),
       headers: {'X-Api-Key': '/ekZbgdfd23YEUx+1IpSUA==dtbKieg0Fc9rtAdg'},
     );
+
     if (response.statusCode == 200) {
       setState(() {
         _paragraphs =
@@ -30,6 +37,10 @@ class _HomePageState extends State<HomePage> {
         _paragraphs = ['Error fetching text'];
       });
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   // generate text function
@@ -116,21 +127,25 @@ class _HomePageState extends State<HomePage> {
                 const Divider(),
                 const SizedBox(height: 10),
                 Expanded(
-                  child: ListView(
-                    children: _paragraphs.map((paragraph) {
-                      return Container(
-                        padding: const EdgeInsets.all(10),
-                        margin: const EdgeInsets.only(bottom: 20),
-                        decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Text(
-                          paragraph.substring(0),
-                          style: const TextStyle(fontSize: 14),
+                  child: _isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : ListView(
+                          children: _paragraphs.map((paragraph) {
+                            return Container(
+                              padding: const EdgeInsets.all(10),
+                              margin: const EdgeInsets.only(bottom: 20),
+                              decoration: BoxDecoration(
+                                  color: Colors.grey[100],
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Text(
+                                paragraph.substring(0),
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            );
+                          }).toList(),
                         ),
-                      );
-                    }).toList(),
-                  ),
                 ),
               ],
             ),

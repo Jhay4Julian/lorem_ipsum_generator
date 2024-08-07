@@ -58,6 +58,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // to remove the last empty string from paragraph list.
+    final int paragraphLength =
+        _paragraphs.length <= 1 ? _paragraphs.length : _paragraphs.length - 1;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -133,7 +136,7 @@ class _HomePageState extends State<HomePage> {
                         )
                       : ListView(
                           children: _paragraphs
-                              .sublist(0, _paragraphs.length - 1)
+                              .sublist(0, paragraphLength)
                               .map((paragraph) {
                             return Container(
                               padding: const EdgeInsets.all(10),

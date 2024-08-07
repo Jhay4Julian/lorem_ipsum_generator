@@ -132,7 +132,9 @@ class _HomePageState extends State<HomePage> {
                           child: CircularProgressIndicator(),
                         )
                       : ListView(
-                          children: _paragraphs.map((paragraph) {
+                          children: _paragraphs
+                              .sublist(0, _paragraphs.length - 1)
+                              .map((paragraph) {
                             return Container(
                               padding: const EdgeInsets.all(10),
                               margin: const EdgeInsets.only(bottom: 20),
@@ -140,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                                   color: Colors.grey[100],
                                   borderRadius: BorderRadius.circular(10)),
                               child: Text(
-                                paragraph.substring(0),
+                                paragraph,
                                 style: const TextStyle(fontSize: 14),
                               ),
                             );
